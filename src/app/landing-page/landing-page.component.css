@@ -1,0 +1,42 @@
+/* Banner Card Style */
+.banner-card {
+    margin: 16px;
+    background-color: #f1f1f1;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .banner-card:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.02);
+  }
+  
+  /* CTA Buttons Style */
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px; /* Space between buttons */
+    margin: 16px;
+  }
+  
+  /* Features Container Style */
+  .features-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px; /* Space between feature cards */
+    margin: 16px;
+  }
+  
+  /* Individual Features Card Style */
+  .features-card {
+    width: 300px;
+    margin: 8px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .features-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
+  }
+  
