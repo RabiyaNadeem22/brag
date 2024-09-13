@@ -6,10 +6,7 @@
     transition: background-color 0.3s ease, transform 0.3s ease;
   }
   
-  .banner-card:hover {
-    background-color: #e0e0e0;
-    transform: scale(1.02);
-  }
+  
   
   /* CTA Buttons Style */
   .cta-buttons {

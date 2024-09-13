@@ -39,8 +39,10 @@
   
   .button-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center; /* Centers the button horizontally */
+    margin-top: 16px; /* Adjust this value as needed */
   }
+  
   
   /* Center-align the form fields */
   mat-form-field {
