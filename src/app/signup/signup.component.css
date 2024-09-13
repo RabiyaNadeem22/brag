@@ -1,0 +1,58 @@
+/* Main container to align children vertically */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    padding: 20px; /* Optional: Add padding around the container */
+  }
+  
+  /* Styling for banner card */
+  .banner-container {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Center banner card horizontally */
+    margin-bottom: 20px; /* Space between banner and signup card */
+  }
+  
+  .banner-card {
+    max-width: 100%; /* Ensure it does not exceed viewport width */
+    padding: 20px; /* Adjust as needed */
+  }
+  
+  /* Styling for signup card */
+  .signup-container {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Center signup card horizontally */
+  }
+  
+  .signup-card {
+    max-width: 400px; /* Set a max-width for the card */
+    width: 100%;
+    padding: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: add shadow for better appearance */
+  }
+  
+  .card-title {
+    text-align: center; /* Center the heading */
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  /* Center-align the form fields */
+  mat-form-field {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center input fields and labels */
+  }
+  
+  mat-form-field .mat-form-field-infix {
+    display: flex;
+    justify-content: center; /* Center input field */
+    width: 100%;
+  }
+  

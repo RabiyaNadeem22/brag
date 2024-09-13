@@ -8,11 +8,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SignupComponent } from './signup/signup.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field'; // Import MatFormFieldModule
+import { MatInputModule } from '@angular/material/input'; // Import MatInputModule
+import { MatSelectModule } from '@angular/material/select'; // Import MatSelectModule
 
 @NgModule({
   declarations: [
     AppComponent,
-    LandingPageComponent
+    LandingPageComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
@@ -20,7 +26,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatButtonModule,
     MatCardModule,
     MatToolbarModule,
-    BrowserAnimationsModule
+    MatFormFieldModule,
+    MatInputModule, 
+    MatSelectModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

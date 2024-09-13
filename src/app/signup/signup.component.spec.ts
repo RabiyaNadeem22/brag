@@ -1,5 +1,4 @@
-/* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
@@ -9,20 +8,22 @@ describe('SignupComponent', () => {
   let component: SignupComponent;
   let fixture: ComponentFixture<SignupComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ SignupComponent ]
     })
-    .compileComponents();
+    .compileComponents(); // Compile components and templates
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture.detectChanges(); // Trigger change detection
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(component).toBeTruthy(); // Check if component is created
   });
+
+  // Add additional test cases here
 });
