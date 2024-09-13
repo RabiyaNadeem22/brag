@@ -14,14 +14,16 @@ import { MatFormFieldModule } from '@angular/material/form-field'; // Import Mat
 import { MatInputModule } from '@angular/material/input'; // Import MatInputModule
 import { MatSelectModule } from '@angular/material/select'; // Import MatSelectModule
 import { LoginComponent } from './login/login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
-  declarations: [
+  declarations: [	
     AppComponent,
     LandingPageComponent,
     SignupComponent,
-    LoginComponent
-  ],
+    LoginComponent,
+      DashboardComponent
+   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
