@@ -1,5 +1,5 @@
 .container {
-  padding: 20px;
+  padding: 16px;
 }
 
 .full-width {
@@ -7,9 +7,10 @@
 }
 
 mat-card {
-  margin-bottom: 20px;
+  margin: 16px 0;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.editor-container {
+  margin-top: 16px;
+  /* Adjust styles if needed */
 }

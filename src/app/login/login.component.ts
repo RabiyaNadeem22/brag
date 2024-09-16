@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
     }
   }
-
+  
   get f() {
     return this.loginForm.controls;
   }

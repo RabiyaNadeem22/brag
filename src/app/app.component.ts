@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'brag';
+  content: string = ''; // This will hold the content for TinyMCE
 }

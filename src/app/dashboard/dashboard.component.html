@@ -1,87 +1,59 @@
-<mat-toolbar color="primary">
+<!-- src/app/dashboard/dashboard.component.html -->
+<header class="toolbar">
   <span>User Dashboard</span>
-  <span class="spacer"></span>
-  <button mat-button (click)="logout()">Logout</button>
-</mat-toolbar>
+  <button (click)="logout()">Logout</button>
+</header>
 
 <div class="container">
   <!-- Search Filters -->
-  <mat-grid-list cols="3" rowHeight="100px" gutterSize="16px">
-    <mat-grid-tile>
-      <mat-form-field appearance="fill">
-        <mat-label>Search by Tags</mat-label>
-        <mat-select [(ngModel)]="selectedTag" (selectionChange)="searchAchievements()">
-          <mat-option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</mat-option>
-          <mat-option [value]="''">All Tags</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-grid-tile>
+  <div class="search-filters">
+    <label for="tag-select">Search by Tags:</label>
+    <select id="tag-select" [(ngModel)]="selectedTag" (change)="searchAchievements()">
+      <option value="">All Tags</option>
+      <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+    </select>
 
-    <mat-grid-tile>
-      <mat-form-field appearance="fill">
-        <mat-label>From Date</mat-label>
-        <input matInput [matDatepicker]="fromPicker" [(ngModel)]="fromDate" (dateChange)="searchAchievements()" />
-        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
-        <mat-datepicker #fromPicker></mat-datepicker>
-      </mat-form-field>
-    </mat-grid-tile>
+    <label for="from-date">From Date:</label>
+    <input type="date" id="from-date" [(ngModel)]="fromDate" (change)="searchAchievements()">
 
-    <mat-grid-tile>
-      <mat-form-field appearance="fill">
-        <mat-label>To Date</mat-label>
-        <input matInput [matDatepicker]="toPicker" [(ngModel)]="toDate" (dateChange)="searchAchievements()" />
-        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
-        <mat-datepicker #toPicker></mat-datepicker>
-      </mat-form-field>
-    </mat-grid-tile>
-  </mat-grid-list>
+    <label for="to-date">To Date:</label>
+    <input type="date" id="to-date" [(ngModel)]="toDate" (change)="searchAchievements()">
+  </div>
 
   <!-- Achievements List -->
-  <mat-card *ngFor="let achievement of filteredAchievements">
-    <mat-card-title>{{ achievement.title }}</mat-card-title>
-    <mat-card-content>
-      <p>{{ achievement.description }}</p>
+  <div id="achievements-list">
+    <div *ngFor="let achievement of filteredAchievements" class="achievement">
+      <h3>{{ achievement.title }}</h3>
+      <p [innerHTML]="achievement.description"></p>
       <p><strong>Date:</strong> {{ achievement.date }}</p>
       <p><strong>Tags:</strong> {{ achievement.tags.join(', ') }}</p>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 
-  <button mat-raised-button color="primary" (click)="toggleNewAchievement()">Create New Achievement</button>
+  <button (click)="toggleNewAchievement()">Create New Achievement</button>
 
   <!-- New Achievement Form -->
   <div *ngIf="showNewAchievement">
-    <mat-card>
-      <mat-card-title>Create New Achievement</mat-card-title>
-      <mat-card-content>
-        <mat-form-field class="full-width">
-          <mat-label>Title</mat-label>
-          <input matInput [(ngModel)]="newAchievement.title" required />
-        </mat-form-field>
+    <h2>Create New Achievement</h2>
+    <label for="title">Title:</label>
+    <input type="text" id="title" [(ngModel)]="newAchievement.title" placeholder="Title">
 
-        <mat-form-field class="full-width">
-          <mat-label>Description</mat-label>
-          <quill-editor [(ngModel)]="newAchievement.description"></quill-editor>
-        </mat-form-field>
+    <label for="description">Description:</label>
+    <editor
+      [(ngModel)]="newAchievement.description"
+      apiKey="ma46okfsa491hljt5w04ylg9a0o4iww9mk50vg9q0hmqvz93"
+      [init]="editorConfig"
+    ></editor>
 
-        <mat-form-field class="full-width">
-          <mat-label>Date</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="newAchievement.date" required />
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
+    <label for="date">Date:</label>
+    <input type="date" id="date" [(ngModel)]="newAchievement.date">
 
-        <mat-form-field class="full-width">
-          <mat-label>Tags</mat-label>
-          <mat-select [(ngModel)]="newAchievement.tags" multiple>
-            <mat-option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-card-content>
+    <label for="tags">Tags:</label>
+    <select id="tags" [(ngModel)]="newAchievement.tags" multiple>
+      <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+    </select>
 
-      <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="createAchievement()">Submit</button>
-        <button mat-raised-button (click)="toggleNewAchievement()">Cancel</button>
-      </mat-card-actions>
-    </mat-card>
+    <button (click)="createAchievement()">Submit</button>
+    <button (click)="toggleNewAchievement()">Cancel</button>
   </div>
 </div>

@@ -14,13 +14,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { QuillModule } from 'ngx-quill';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { RouterModule } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';  // Import MatTabsModule
 import { MatGridListModule } from '@angular/material/grid-list';  // Import MatGridListModule
-
+import { EditorModule,TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 @NgModule({
   declarations: [	
     AppComponent,
@@ -45,10 +44,12 @@ import { MatGridListModule } from '@angular/material/grid-list';  // Import MatG
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
-    QuillModule.forRoot(),
+    EditorModule, // Import TinyMCE EditorModule
     RouterModule.forRoot([])  // Import RouterModule with empty routes
   ],
-  providers: [],
+  providers: [{provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'}
+    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
