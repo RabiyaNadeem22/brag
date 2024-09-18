@@ -1,59 +1,83 @@
 <!-- src/app/dashboard/dashboard.component.html -->
 <header class="toolbar">
-  <span>User Dashboard</span>
-  <button (click)="logout()">Logout</button>
+  <div class="toolbar-left">
+    <span class="app-name">BragDoc</span>
+  </div>
+  <div class="toolbar-center">
+    <span>User Dashboard</span>
+  </div>
+  <div class="toolbar-right">
+   <button class="toolbar-button" (click)="edit()">Edit Profile</button> 
+    <button class="toolbar-button" (click)="logout()">Logout</button>
+  </div>
 </header>
 
+<!-- The rest of your HTML remains unchanged -->
 <div class="container">
   <!-- Search Filters -->
-  <div class="search-filters">
-    <label for="tag-select">Search by Tags:</label>
-    <select id="tag-select" [(ngModel)]="selectedTag" (change)="searchAchievements()">
-      <option value="">All Tags</option>
-      <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
-    </select>
+  <div class="filters-card">
+    <h2 class="filters-title">Search Filters</h2>
+    <div class="search-filters">
+      <div class="filter-item">
+        <label for="tag-select">Search by Tags:</label>
+        <select id="tag-select" [(ngModel)]="selectedTag" (change)="searchAchievements()">
+          <option value="">All Tags</option>
+          <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+        </select>
+      </div>
 
-    <label for="from-date">From Date:</label>
-    <input type="date" id="from-date" [(ngModel)]="fromDate" (change)="searchAchievements()">
+      <div class="filter-item">
+        <label for="from-date">From Date:</label>
+        <input type="date" id="from-date" [(ngModel)]="fromDate" (change)="searchAchievements()">
+      </div>
 
-    <label for="to-date">To Date:</label>
-    <input type="date" id="to-date" [(ngModel)]="toDate" (change)="searchAchievements()">
+      <div class="filter-item">
+        <label for="to-date">To Date:</label>
+        <input type="date" id="to-date" [(ngModel)]="toDate" (change)="searchAchievements()">
+      </div>
+    </div>
   </div>
 
   <!-- Achievements List -->
-  <div id="achievements-list">
-    <div *ngFor="let achievement of filteredAchievements" class="achievement">
-      <h3>{{ achievement.title }}</h3>
+  <div id="achievements-list" class="achievements-container">
+    <div *ngFor="let achievement of filteredAchievements" class="achievement-card">
+      <div class="achievement-header">
+        <h3>{{ achievement.title }}</h3>
+        <span class="achievement-date">{{ achievement.date | date }}</span>
+      </div>
       <p [innerHTML]="achievement.description"></p>
-      <p><strong>Date:</strong> {{ achievement.date }}</p>
       <p><strong>Tags:</strong> {{ achievement.tags.join(', ') }}</p>
     </div>
   </div>
 
-  <button (click)="toggleNewAchievement()">Create New Achievement</button>
+  <button class="create-button" (click)="toggleNewAchievement()">Create New Achievement</button>
 
   <!-- New Achievement Form -->
-  <div *ngIf="showNewAchievement">
-    <h2>Create New Achievement</h2>
-    <label for="title">Title:</label>
-    <input type="text" id="title" [(ngModel)]="newAchievement.title" placeholder="Title">
+  <div *ngIf="showNewAchievement" class="form-modal">
+    <div class="form-container">
+      <h2>Create New Achievement</h2>
+      <label for="title">Title:</label>
+      <input type="text" id="title" [(ngModel)]="newAchievement.title" placeholder="Title">
 
-    <label for="description">Description:</label>
-    <editor
-      [(ngModel)]="newAchievement.description"
-      apiKey="ma46okfsa491hljt5w04ylg9a0o4iww9mk50vg9q0hmqvz93"
-      [init]="editorConfig"
-    ></editor>
+      <label for="description">Description:</label>
+      <editor
+        [(ngModel)]="newAchievement.description"
+        apiKey="ma46okfsa491hljt5w04ylg9a0o4iww9mk50vg9q0hmqvz93"
+        [init]="editorConfig"
+      ></editor>
 
-    <label for="date">Date:</label>
-    <input type="date" id="date" [(ngModel)]="newAchievement.date">
+      <label for="date">Date:</label>
+      <input type="date" id="date" [(ngModel)]="newAchievement.date">
 
-    <label for="tags">Tags:</label>
-    <select id="tags" [(ngModel)]="newAchievement.tags" multiple>
-      <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
-    </select>
+      <label for="tags">Tags:</label>
+      <select id="tags" [(ngModel)]="newAchievement.tags" multiple>
+        <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+      </select>
 
-    <button (click)="createAchievement()">Submit</button>
-    <button (click)="toggleNewAchievement()">Cancel</button>
+      <div class="form-buttons">
+        <button class="submit-button" (click)="createAchievement()">Submit</button>
+        <button class="cancel-button" (click)="toggleNewAchievement()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>

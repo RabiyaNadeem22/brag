@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+
   // Define TinyMCE editor options here
 editorConfig = {
   height: 300,
@@ -27,7 +29,7 @@ editorConfig = {
   searchQuery = '';
   showNewAchievement = false;
   newAchievement = { title: '', description: '', date: '', tags: [] };
-  availableTags = ['coding', 'graduation', 'competition'];
+  availableTags = ['coding', 'graduation', 'competition','personal growth','leadership'];
   selectedTag = '';
   fromDate: Date | null = null;
   toDate: Date | null = null;
@@ -58,9 +60,13 @@ editorConfig = {
       this.searchAchievements(); // Update search results after adding new achievement
     }
   }
-
+  constructor(private router: Router) {}
   logout() {
     // Implement your logout logic here
-    alert('Logging out...');
+    this.router.navigate(['/login']); // Navigate to login or another appropriate route
   }
+
+  edit() {
+    this.router.navigate(['/edit']);
+    }
 }
