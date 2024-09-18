@@ -243,3 +243,54 @@ body {
 .cancel-button:hover {
   background-color: #c62828;
 }
+
+.achievement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date-and-icons {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  gap: 5px; /* Space between date and icons */
+}
+
+.action-icons {
+  display: flex;
+  gap: 5px; /* Space between icons */
+  cursor: pointer;
+}
+
+.edit-icon,
+.delete-icon {
+  font-size: 18px; /* Increase size of the icons */
+  padding: 5px; /* Add padding for a better click area */
+  transition: color 0.3s ease; /* Smooth color transition on hover */
+}
+
+.edit-icon:hover {
+  color: blue; /* Change color on hover */
+}
+
+.delete-icon:hover {
+  color: red; /* Change color on hover */
+}
+
+.export-button {
+
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background 0.3s;
+}
+
+
+.export-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
