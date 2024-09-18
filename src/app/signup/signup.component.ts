@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../services/user.service'; // Import UserService
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar for notifications
 
 @Component({
   selector: 'app-signup',
@@ -11,14 +13,18 @@ export class SignupComponent implements OnInit {
   signupForm: FormGroup;
   industries: string[] = ['Tech', 'Finance', 'Healthcare', 'Education'];
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private userService: UserService, // Inject UserService
+    private snackBar: MatSnackBar // Inject MatSnackBar for notifications
+  ) {
     this.signupForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
-      industry: ['', Validators.required],
-      profilePicture: [null]
+      industry: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
   }
 
@@ -36,21 +42,33 @@ export class SignupComponent implements OnInit {
 
   onSubmit(): void {
     if (this.signupForm.valid) {
-      // Handle form submission
-      console.log('Form Data:', this.signupForm.value);
-      this.router.navigate(['/dashboard']);
+      // Prepare user data for submission
+      const userData = {
+        username: this.signupForm.value.username,
+        email: this.signupForm.value.email,
+        password: this.signupForm.value.password,
+        industry: this.signupForm.value.industry
+      };
+
+      // Call the user service to create a new user
+      this.userService.createUser(userData).subscribe({
+        next: (response) => {
+          console.log('User created successfully', response);
+          this.snackBar.open('Signup successful!', 'Close', {
+            duration: 2000,
+          });
+          this.router.navigate(['/dashboard']); // Navigate to dashboard after successful signup
+        },
+        error: (err) => {
+          console.error('Error creating user', err);
+          this.snackBar.open('Signup failed. Please try again.', 'Close', {
+            duration: 2000,
+          });
+        }
+      });
     } else {
       // Trigger validation messages
       this.signupForm.markAllAsTouched();
-    }
-  }
-
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.signupForm.patchValue({
-        profilePicture: file
-      });
     }
   }
 

@@ -1,6 +1,11 @@
+// src/app/components/login/login.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../services/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoginModel } from '../models/login.model'; // Import the LoginModel
 
 @Component({
   selector: 'app-login',
@@ -10,33 +15,47 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private userService: UserService,
+    private snackBar: MatSnackBar
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
   }
 
-  ngOnInit(): void {
-    // Additional initialization logic if needed
-  }
+  ngOnInit(): void {}
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      // Handle form submission
-      console.log('Form Data:', this.loginForm.value);
-      // Simulate an authentication process
-      if (this.loginForm.value.email === 'user@example.com' && this.loginForm.value.password === 'password') {
-        this.router.navigate(['/dashboard']);
-      } else {
-        console.error('Invalid email or password');
-      }
+      const loginData: LoginModel = {
+        email: this.loginForm.value.email,
+        password: this.loginForm.value.password
+      };
+
+      this.userService.loginUser(loginData).subscribe({
+        next: (response) => {
+          console.log('Login successful', response);
+          this.snackBar.open('Login successful!', 'Close', {
+            duration: 2000,
+          });
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          console.error('Error logging in', err);
+          this.snackBar.open('Login failed. Please check your credentials and try again.', 'Close', {
+            duration: 2000,
+          });
+        }
+      });
     } else {
-      // Trigger validation messages
       this.loginForm.markAllAsTouched();
     }
   }
-  
+
   get f() {
     return this.loginForm.controls;
   }

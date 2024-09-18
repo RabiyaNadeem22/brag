@@ -20,6 +20,9 @@ import { RouterModule } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';  // Import MatTabsModule
 import { MatGridListModule } from '@angular/material/grid-list';  // Import MatGridListModule
 import { EditorModule,TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http'; 
+
 @NgModule({
   declarations: [	
     AppComponent,
@@ -45,10 +48,13 @@ import { EditorModule,TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
     ReactiveFormsModule,
     FormsModule,
     EditorModule, // Import TinyMCE EditorModule
-    RouterModule.forRoot([])  // Import RouterModule with empty routes
+    RouterModule.forRoot([]) , // Import RouterModule with empty routes
+    MatSnackBarModule
+
+
   ],
-  providers: [{provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'}
-    
+  providers: [{provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'},
+    provideHttpClient()
   ],
   bootstrap: [AppComponent]
 })
