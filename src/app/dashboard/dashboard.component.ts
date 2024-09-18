@@ -1,22 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AchievementService } from '../services/achievement.service'; // Adjust the path as needed
+import { UserService } from '../services/user.service'; // Import UserService
+import { Achievement } from '../models/achievement.model'; // Import shared interface
 import jsPDF from 'jspdf';
-// Define an interface for achievements
-interface Achievement {
-  title: string;
-  description: string;
-  date: string;
-  tags: string[];
-}
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
-  // Define TinyMCE editor options here
   editorConfig = {
     height: 300,
     menubar: true,
@@ -25,34 +20,54 @@ export class DashboardComponent implements OnInit {
     content_css: 'https://www.tiny.cloud/css/codepen.min.css',
     setup: (editor: any) => {
       editor.on('change', () => {
-        this.newAchievement.description = editor.getContent();
+        this.newAchievement.Description = editor.getContent();
       });
     }
   };
 
-  // Use the Achievement interface for type safety
-  achievements: Achievement[] = [
-    { title: 'Won a coding competition', description: 'Placed first in XYZ contest', date: '2024-08-10', tags: ['coding', 'competition'] },
-    { title: 'Graduated from IT', description: 'Received my Bachelor\'s degree', date: '2024-06-01', tags: ['education', 'graduation'] }
-  ];
-
-  filteredAchievements: Achievement[] = this.achievements;
+  achievements: Achievement[] = [];
+  filteredAchievements: Achievement[] = [];
   showNewAchievement = false;
-  newAchievement: Achievement = { title: '', description: '', date: '', tags: [] };
+  newAchievement: Achievement = { Id: 0, Title: '', Description: '', Date: '', Tag: '', UserId: 0 }; // Initialize with required fields
   availableTags: string[] = ['coding', 'graduation', 'competition', 'personal growth', 'leadership'];
   selectedTag: string = '';
   fromDate: Date | null = null;
   toDate: Date | null = null;
+  editingIndex: number | null = null;
+
+  constructor(
+    private router: Router,
+    private achievementService: AchievementService,
+    private userService: UserService // Inject UserService
+  ) {}
 
   ngOnInit(): void {
-    this.searchAchievements(); // Initialize filtered list on load
+    this.loadAchievements(); // Fetch achievements on component initialization
+  }
+
+ 
+  loadAchievements(): void {
+    const userId = this.userService.getUserId();
+    if (userId !== null) {
+      this.achievementService.getAchievementsByUserId(userId).subscribe({
+        next: (data: Achievement[]) => {
+          this.achievements = data;
+          this.filteredAchievements = data;
+        },
+        error: (error) => {
+          console.error('Error fetching achievements', error);
+        }
+      });
+    } else {
+      console.error('User ID not found');
+    }
   }
 
   searchAchievements() {
     this.filteredAchievements = this.achievements.filter(achievement => {
-      const matchesTag = this.selectedTag ? achievement.tags.includes(this.selectedTag) : true;
+      const matchesTag = this.selectedTag ? achievement.Tag === this.selectedTag : true;
       const matchesDateRange = (this.fromDate && this.toDate) 
-        ? new Date(achievement.date) >= this.fromDate && new Date(achievement.date) <= this.toDate 
+        ? new Date(achievement.Date) >= this.fromDate && new Date(achievement.Date) <= this.toDate 
         : true;
       return matchesTag && matchesDateRange;
     });
@@ -61,46 +76,75 @@ export class DashboardComponent implements OnInit {
   toggleNewAchievement() {
     this.showNewAchievement = !this.showNewAchievement;
     if (!this.showNewAchievement) {
-      this.newAchievement = { title: '', description: '', date: '', tags: [] }; // Reset form when closed
+      this.newAchievement = { Id: 0, Title: '', Description: '', Date: '', Tag: '', UserId: this.userService.getUserId() || 0 }; // Reset form when closed
     }
   }
 
   createAchievement() {
-    if (this.newAchievement.title && this.newAchievement.description && this.newAchievement.date) {
-      if (this.editingIndex !== null) {
+    if (this.newAchievement.Title && this.newAchievement.Description && this.newAchievement.Date) {
+      this.newAchievement.UserId = this.userService.getUserId() || 0; // Ensure UserId is set
+      
+      if (this.editingIndex !== null && this.editingIndex >= 0 && this.editingIndex < this.filteredAchievements.length) {
         // Update existing achievement
-        this.achievements[this.editingIndex] = { ...this.newAchievement };
-        this.editingIndex = null; // Reset editing index
+        this.achievementService.updateAchievement(this.newAchievement).subscribe({
+          next: () => {
+            if (this.editingIndex !== null && this.editingIndex >= 0) {
+              this.achievements[this.editingIndex] = { ...this.newAchievement };
+            }
+            this.editingIndex = null; // Reset editing index
+            this.loadAchievements(); // Reload achievements after update
+            this.showNewAchievement = false;
+          },
+          error: (error) => {
+            console.error('Error updating achievement', error);
+          }
+        });
       } else {
         // Create a new achievement
-        this.achievements.push({ ...this.newAchievement });
+        this.achievementService.addAchievement(this.newAchievement).subscribe({
+          next: (newAchievement: Achievement) => {
+            this.achievements.push(newAchievement);
+            this.newAchievement = { Id: 0, Title: '', Description: '', Date: '', Tag: '', UserId: this.userService.getUserId() || 0 };
+            this.toggleNewAchievement();
+            this.searchAchievements(); // Update search results after adding new achievement
+          },
+          error: (error) => {
+            console.error('Error creating achievement', error);
+          }
+        });
       }
-      this.newAchievement = { title: '', description: '', date: '', tags: [] };
-      this.toggleNewAchievement();
-      this.searchAchievements(); // Update search results after adding new achievement
     }
   }
 
-  // Edit Achievement
-  editingIndex: number | null = null;
   editAchievement(index: number) {
-    this.editingIndex = index;
-    this.newAchievement = { ...this.filteredAchievements[index] }; // Populate form for editing
-    this.showNewAchievement = true; // Show the form
-  }
-
-  // Delete Achievement
-  deleteAchievement(index: number) {
-    if (confirm('Are you sure you want to delete this achievement?')) {
-      this.achievements.splice(index, 1); // Remove the achievement from the list
-      this.searchAchievements(); // Update search results after deletion
+    if (index >= 0 && index < this.filteredAchievements.length) {
+      this.editingIndex = index;
+      this.newAchievement = { ...this.filteredAchievements[index] }; // Populate form for editing
+      this.showNewAchievement = true; // Show the form
     }
   }
 
-  constructor(private router: Router) {}
+  deleteAchievement(index: number) {
+    if (index >= 0 && index < this.filteredAchievements.length) {
+      if (confirm('Are you sure you want to delete this achievement?')) {
+        const achievementId = this.filteredAchievements[index].Id;
+        if (achievementId != null) {
+          this.achievementService.deleteAchievement(achievementId).subscribe({
+            next: () => {
+              this.achievements = this.achievements.filter((_, i) => i !== index); // Remove the achievement from the list
+              this.searchAchievements(); // Update search results after deletion
+            },
+            error: (error) => {
+              console.error('Error deleting achievement', error);
+            }
+          });
+        }
+      }
+    }
+  }
 
   logout() {
-    // Implement your logout logic here
+    this.userService.clearUserId(); // Clear user ID on logout
     this.router.navigate(['/login']); // Navigate to login or another appropriate route
   }
 
@@ -111,44 +155,35 @@ export class DashboardComponent implements OnInit {
   exportAchievements() {
     const doc = new jsPDF();
   
-    // Add title
     doc.setFontSize(22);
     doc.text('Achievements List', 14, 20);
   
-    // Add headers
     doc.setFontSize(12);
     doc.text('Title', 14, 30);
     doc.text('Description', 70, 30);
     doc.text('Date', 140, 30);
     doc.text('Tags', 180, 30);
   
-    // Add achievements
-    let y = 40; // Starting y position for achievements
-    const lineHeight = 10; // Space between lines
+    let y = 40;
+    const lineHeight = 10;
   
     this.achievements.forEach(achievement => {
-      // Title
-      doc.text(achievement.title, 14, y);
+      doc.text(achievement.Title || '', 14, y);
       
-      // Description
-      const descriptionLines = doc.splitTextToSize(achievement.description, 70);
+      const descriptionLines = doc.splitTextToSize(achievement.Description || '', 70);
       doc.text(descriptionLines, 70, y);
   
-      // Date
-      doc.text(achievement.date, 140, y);
+      doc.text(achievement.Date || '', 140, y);
   
-      // Tags
-      const tags = achievement.tags.join(', ');
-      const tagsLines = doc.splitTextToSize(tags, 40); // Adjust width for tags
-      tagsLines.forEach((line:string, index:number) => {
-        doc.text(line, 180, y + (index * lineHeight)); // Adjust position for each line of tags
+      const tags = achievement.Tag || '';
+      const tagsLines = doc.splitTextToSize(tags, 40);
+      tagsLines.forEach((line: string, index: number) => {
+        doc.text(line, 180, y + (index * lineHeight));
       });
   
-      y += lineHeight; // Move down for the next achievement
+      y += lineHeight * Math.max(descriptionLines.length, tagsLines.length);
     });
   
-    // Save the PDF
     doc.save('achievements.pdf');
-  }
-  
-}
+ 
+  }}

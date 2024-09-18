@@ -40,16 +40,16 @@
   <div id="achievements-list" class="achievements-container">
     <div *ngFor="let achievement of filteredAchievements; let i = index" class="achievement-card">
       <div class="achievement-header">
-        <h3>{{ achievement.title }}</h3>
-        <span class="achievement-date">{{ achievement.date | date }}</span>
+        <h3>{{ achievement.Title }}</h3>
+        <span class="achievement-date">{{ achievement.Date | date }}</span>
         <div class="action-icons">
           <span (click)="editAchievement(i)" class="edit-icon">✎</span>
           <span (click)="deleteAchievement(i)" class="delete-icon">✖</span>
         </div>
       </div>
       
-      <p [innerHTML]="achievement.description"></p>
-      <p><strong>Tags:</strong> {{ achievement.tags.join(', ') }}</p>
+      <p [innerHTML]="achievement.Description"></p>
+      <p><strong>Tags:</strong> {{ achievement.Tag }}</p>
     </div>
   </div>
 
@@ -61,20 +61,20 @@
     <div class="form-container">
       <h2>Create/Edit Achievement</h2>
       <label for="title">Title:</label>
-      <input type="text" id="title" [(ngModel)]="newAchievement.title" placeholder="Title">
+      <input type="text" id="title" [(ngModel)]="newAchievement.Title" placeholder="Title">
 
       <label for="description">Description:</label>
       <editor
-        [(ngModel)]="newAchievement.description"
+        [(ngModel)]="newAchievement.Description"
         apiKey="ma46okfsa491hljt5w04ylg9a0o4iww9mk50vg9q0hmqvz93"
         [init]="editorConfig"
       ></editor>
 
       <label for="date">Date:</label>
-      <input type="date" id="date" [(ngModel)]="newAchievement.date">
+      <input type="date" id="date" [(ngModel)]="newAchievement.Date">
 
       <label for="tags">Tags:</label>
-      <select id="tags" [(ngModel)]="newAchievement.tags" multiple>
+      <select id="tags" [(ngModel)]="newAchievement.Tag" multiple>
         <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
       </select>
 

@@ -1,11 +1,9 @@
-// src/app/components/login/login.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { LoginModel } from '../models/login.model'; // Import the LoginModel
+import { LoginModel } from '../models/login.model';
 
 @Component({
   selector: 'app-login',
@@ -35,10 +33,15 @@ export class LoginComponent implements OnInit {
         email: this.loginForm.value.email,
         password: this.loginForm.value.password
       };
-
+  
       this.userService.loginUser(loginData).subscribe({
         next: (response) => {
           console.log('Login successful', response);
+          if (response.userId) {
+            this.userService.setUserId(response.userId); // Store user ID in session storage
+          } else {
+            console.error('User ID not found in login response');
+          }
           this.snackBar.open('Login successful!', 'Close', {
             duration: 2000,
           });
@@ -55,6 +58,7 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
     }
   }
+  
 
   get f() {
     return this.loginForm.controls;
