@@ -35,23 +35,29 @@
       </div>
     </div>
   </div>
-
-  <!-- Achievements List -->
-  <div id="achievements-list" class="achievements-container">
-    <div *ngFor="let achievement of filteredAchievements; let i = index" class="achievement-card">
+<!-- Achievements List -->
+<div id="achievements-list" class="achievements-container">
+  <div *ngIf="filteredAchievements.length > 0; else noAchievements">
+    <div *ngFor="let achievement of filteredAchievements" class="achievement-card">
       <div class="achievement-header">
         <h3>{{ achievement.Title }}</h3>
         <span class="achievement-date">{{ achievement.Date | date }}</span>
         <div class="action-icons">
-          <span (click)="editAchievement(i)" class="edit-icon">✎</span>
-          <span (click)="deleteAchievement(i)" class="delete-icon">✖</span>
+          <span (click)="updateAchievement(achievement)" class="edit-icon">✎</span>
+          <span (click)="deleteAchievement(achievement.Id)" class="delete-icon">✖</span>
         </div>
       </div>
-      
       <p [innerHTML]="achievement.Description"></p>
       <p><strong>Tags:</strong> {{ achievement.Tag }}</p>
     </div>
   </div>
+  
+  <ng-template #noAchievements>
+    <p>No achievements found.</p>
+  </ng-template>
+  
+</div>
+
 
   <button class="create-button" (click)="toggleNewAchievement()">Create New Achievement</button>
   <button class="export-button" style="margin-left: 20px;" (click)="exportAchievements()">Export to PDF</button>
@@ -59,29 +65,35 @@
   <!-- New Achievement Form -->
   <div *ngIf="showNewAchievement" class="form-modal">
     <div class="form-container">
-      <h2>Create/Edit Achievement</h2>
+      <h2 *ngIf="editingIndex === null">Create Achievement</h2>
+      <h2 *ngIf="editingIndex !== null">Edit Achievement</h2>
+  
       <label for="title">Title:</label>
       <input type="text" id="title" [(ngModel)]="newAchievement.Title" placeholder="Title">
-
+  
       <label for="description">Description:</label>
       <editor
         [(ngModel)]="newAchievement.Description"
         apiKey="ma46okfsa491hljt5w04ylg9a0o4iww9mk50vg9q0hmqvz93"
         [init]="editorConfig"
       ></editor>
-
+  
       <label for="date">Date:</label>
       <input type="date" id="date" [(ngModel)]="newAchievement.Date">
-
-      <label for="tags">Tags:</label>
-      <select id="tags" [(ngModel)]="newAchievement.Tag" multiple>
-        <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
-      </select>
-
+  
+      <div class="filter-item">
+        <label for="tag-select">Select a Tag:</label>
+        <select id="tag-select" [(ngModel)]="selectedTag">
+          <option value="">Select a tag</option>
+          <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+        </select>
+      </div>
+      
+  
       <div class="form-buttons">
-        <button class="submit-button" (click)="createAchievement()">Submit</button>
+        <button class="submit-button" (click)="editingIndex === null ? createAchievement() : saveAchievement()">Submit</button>
         <button class="cancel-button" (click)="toggleNewAchievement()">Cancel</button>
       </div>
     </div>
   </div>
-</div>
+  

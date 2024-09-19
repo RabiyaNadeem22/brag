@@ -32,10 +32,10 @@ export class UserService {
   }
 
  // UserService: loginUser method
-loginUser(loginData: LoginModel): Observable<any> {
+ loginUser(loginData: LoginModel): Observable<any> {
   return this.http.post(`${this.apiUrl}/login`, loginData, this.httpOptions).pipe(
     tap((response: any) => {
-      if (response && response.userId) { // Adjust according to your API response structure
+      if (response && response.userId) {
         this.setUserId(response.userId);
       } else {
         console.error('User ID not found in login response');
@@ -43,6 +43,8 @@ loginUser(loginData: LoginModel): Observable<any> {
     })
   );
 }
+
+
 
 
   // Get user details by ID
