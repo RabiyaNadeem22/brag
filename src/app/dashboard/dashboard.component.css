@@ -117,11 +117,11 @@ body {
 }
 
 .achievement-card {
-  background: white;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+  margin-bottom: 20px; /* Adjust the value as needed */
+  padding: 15px; /* Optional: Add padding for better spacing */
+  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  border-radius: 5px; /* Optional: Rounded corners */
+  background-color: #f9f9f9; /* Optional: Background color */
 }
 
 .achievement-card:hover {

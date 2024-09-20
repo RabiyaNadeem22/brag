@@ -125,8 +125,22 @@ formatDate(dateString: string): string {
         };
 
         this.achievementService.addAchievement(achievementToCreate, userId).subscribe({
-            next: (newAchievement: Achievement) => {
-                this.achievements.push(newAchievement);
+            next: (newAchievement: any) => {  // Use 'any' temporarily for debugging
+                console.log('New Achievement Returned:', newAchievement); // Log the new achievement
+
+                // Map it to the correct structure
+                const formattedAchievement = {
+                    Id: newAchievement.id, // Ensure these match your backend response
+                    Title: newAchievement.title,
+                    Description: newAchievement.description,
+                    Date: newAchievement.date ? new Date(newAchievement.date) : null, // Correctly parse the date
+                    Tag: newAchievement.tag,
+                    UserId: newAchievement.userId
+                };
+
+                this.achievements.push(formattedAchievement);
+                console.log('Achievements after adding new:', this.achievements); // Log achievements array
+
                 this.resetNewAchievementForm();
                 this.toggleNewAchievement();
             },
@@ -138,6 +152,7 @@ formatDate(dateString: string): string {
         console.error('Validation failed: Title, Description, and Date are required');
     }
 }
+
 
 
   resetNewAchievementForm() {
