@@ -170,12 +170,12 @@ formatDate(dateString: string): string {
   updateAchievement(achievement: Achievement) {
     if (achievement.Title && achievement.Description && achievement.Date) {
       achievement.UserId = this.userService.getUserId() || 0;
-
+  
       this.achievementService.updateAchievement(achievement).subscribe({
         next: () => {
           const index = this.achievements.findIndex(a => a.Id === achievement.Id);
           if (index !== -1) {
-            this.achievements[index] = { ...achievement };
+            this.achievements[index] = { ...achievement }; // Update existing achievement
           }
           this.resetNewAchievementForm();
           this.toggleNewAchievement();
@@ -188,18 +188,28 @@ formatDate(dateString: string): string {
       console.error('Validation failed: Title, Description, and Date are required');
     }
   }
+  
+
 
   deleteAchievement(achievementId: number) {
-    this.achievementService.deleteAchievement(achievementId).subscribe({
-      next: () => {
-        console.log('Achievement deleted successfully');
-        this.achievements = this.achievements.filter(a => a.Id !== achievementId);
-      },
-      error: (err) => {
-        console.error('Error deleting achievement', err);
-      }
+    const userId = this.userService.getUserId(); // Get the user ID from session storage
+    if (userId === null) {
+        console.error('User ID is null. Cannot delete achievement.');
+        return; // Exit the method early
+    }
+    
+    this.achievementService.deleteAchievement(userId, achievementId).subscribe({
+        next: () => {
+            console.log('Achievement deleted successfully');
+            this.achievements = this.achievements.filter(a => a.Id !== achievementId);
+        },
+        error: (err) => {
+            console.error('Error deleting achievement', err);
+        }
     });
-  }
+}
+
+
 
   exportAchievements() {
     const doc = new jsPDF();

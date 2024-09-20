@@ -30,18 +30,22 @@ export class AchievementService {
   
 
   updateAchievement(achievement: Achievement): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${achievement.Id}`, achievement, this.httpOptions)
+    const userId = this.getUserId();
+    return this.http.put<void>(`${this.apiUrl}/${userId}/${achievement.Id}`, achievement, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );
   }
+  
 
-  deleteAchievement(id: number): Observable<any> {
-    return this.http.delete(`http://localhost:5176/api/Achievements/${id}`)
+
+  deleteAchievement(userId: number, achievementId: number): Observable<any> { 
+    return this.http.delete(`${this.apiUrl}/${userId}/${achievementId}`)
       .pipe(
         catchError(this.handleError)
       );
-  }
+}
+
 
   private handleError(error: any) {
     let errorMessage = '';
@@ -57,4 +61,10 @@ export class AchievementService {
     console.error('Error occurred:', errorMessage);
     return throwError(() => new Error('Something went wrong; please try again later.'));
   }
+
+  getUserId(): number | null {
+    const id = sessionStorage.getItem('userId');
+    return id ? parseInt(id, 10) : null;
+  }
+
 }
