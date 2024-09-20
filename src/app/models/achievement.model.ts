@@ -1,11 +1,12 @@
 export interface Achievement {
-    Id: number;
-    Title: string;
-    Description: string;
-    Date: string;
-    Tag: string;
-    UserId: number; // Adjust if necessary
-  }
+  Id: number;
+  Title: string;
+  Description: string;
+  Date: Date | null; // Allow Date or null
+  Tag: string;
+  UserId: number;
+}
+
 
   export interface FilteredAchievement {
     Id: number;

@@ -1,86 +1,60 @@
-<header class="toolbar">
-  <div class="toolbar-left">
-    <span class="app-name">BragDoc</span>
-  </div>
-  <div class="toolbar-center">
-    <span>User Dashboard</span>
-  </div>
-  <div class="toolbar-right">
-    <button class="toolbar-button" (click)="edit()">Edit Profile</button>
-    <button class="toolbar-button" (click)="logout()">Logout</button>
-  </div>
-</header>
-
 <div class="container">
-  <!-- Search Filters -->
-  <div class="filters-card">
-    <h2 class="filters-title">Search Filters</h2>
-    <div class="search-filters">
-      <div class="filter-item">
-        <label for="tag-select">Search by Tags:</label>
-        <select id="tag-select" [(ngModel)]="selectedTag" (change)="searchAchievements()">
-          <option value="">All Tags</option>
-          <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
-        </select>
-      </div>
-
-      <div class="filter-item">
-        <label for="from-date">From Date:</label>
-        <input type="date" id="from-date" [(ngModel)]="fromDate" (change)="searchAchievements()">
-      </div>
-
-      <div class="filter-item">
-        <label for="to-date">To Date:</label>
-        <input type="date" id="to-date" [(ngModel)]="toDate" (change)="searchAchievements()">
-      </div>
+  <header class="toolbar">
+    <div class="toolbar-left">
+      <span class="app-name">BragDoc</span>
     </div>
-  </div>
-<!-- Achievements List -->
-<div id="achievements-list" class="achievements-container">
-  <div *ngIf="filteredAchievements.length > 0; else noAchievements">
-    <div *ngFor="let achievement of filteredAchievements" class="achievement-card">
-      <div class="achievement-header">
-        <h3>{{ achievement.Title }}</h3>
-        <span class="achievement-date">{{ achievement.Date | date }}</span>
-        <div class="action-icons">
-          <span (click)="updateAchievement(achievement)" class="edit-icon">✎</span>
-          <span (click)="deleteAchievement(achievement.Id)" class="delete-icon">✖</span>
+    <div class="toolbar-center">
+      <span>User Dashboard</span>
+    </div>
+    <div class="toolbar-right">
+      <button class="toolbar-button" (click)="edit()">Edit Profile</button>
+      <button class="toolbar-button" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Achievements List -->
+  <div id="achievements-list" class="achievements-container">
+    <div *ngIf="achievements.length > 0; else noAchievements">
+      <div *ngFor="let achievement of achievements" class="achievement-card">
+        <div class="achievement-header">
+          <h3>{{ achievement.Title }}</h3>
+          <td>{{ achievement.Date ? (achievement.Date | date: 'shortDate') : 'Invalid Date' }}</td>
+
+          <div class="action-icons">
+            <span (click)="updateAchievement(achievement)" class="edit-icon">✎</span>
+            <span (click)="deleteAchievement(achievement.Id)" class="delete-icon">✖</span>
+          </div>
         </div>
+        <p [innerHTML]="sanitizeHtml(achievement.Description)"></p>
+        <p><strong>Tags:</strong> {{ achievement.Tag }}</p>
       </div>
-      <p [innerHTML]="achievement.Description"></p>
-      <p><strong>Tags:</strong> {{ achievement.Tag }}</p>
     </div>
+  
+    <ng-template #noAchievements>
+      <p>No achievements found.</p>
+    </ng-template>
   </div>
-  
-  <ng-template #noAchievements>
-    <p>No achievements found.</p>
-  </ng-template>
-  
-</div>
 
+  <!-- Create New Achievement and Export Buttons -->
+  <div class="actions">
+    <button class="create-button" (click)="toggleNewAchievement()">Create New Achievement</button>
+    <button class="export-button" style="margin-left: 20px;" (click)="exportAchievements()">Export to PDF</button>
+  </div>
 
-  <button class="create-button" (click)="toggleNewAchievement()">Create New Achievement</button>
-  <button class="export-button" style="margin-left: 20px;" (click)="exportAchievements()">Export to PDF</button>
-
-  <!-- New Achievement Form -->
+  <!-- New Achievement Form Modal -->
   <div *ngIf="showNewAchievement" class="form-modal">
     <div class="form-container">
-      <h2 *ngIf="editingIndex === null">Create Achievement</h2>
-      <h2 *ngIf="editingIndex !== null">Edit Achievement</h2>
-  
+      <h2>Create Achievement</h2>
       <label for="title">Title:</label>
       <input type="text" id="title" [(ngModel)]="newAchievement.Title" placeholder="Title">
-  
       <label for="description">Description:</label>
       <editor
         [(ngModel)]="newAchievement.Description"
-        apiKey="ma46okfsa491hljt5w04ylg9a0o4iww9mk50vg9q0hmqvz93"
+        apiKey="your-tiny-mce-api-key"
         [init]="editorConfig"
       ></editor>
-  
       <label for="date">Date:</label>
       <input type="date" id="date" [(ngModel)]="newAchievement.Date">
-  
       <div class="filter-item">
         <label for="tag-select">Select a Tag:</label>
         <select id="tag-select" [(ngModel)]="selectedTag">
@@ -88,12 +62,10 @@
           <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
         </select>
       </div>
-      
-  
       <div class="form-buttons">
-        <button class="submit-button" (click)="editingIndex === null ? createAchievement() : saveAchievement()">Submit</button>
+        <button class="submit-button" (click)="createAchievement()">Submit</button>
         <button class="cancel-button" (click)="toggleNewAchievement()">Cancel</button>
       </div>
     </div>
   </div>
-  
+</div>
