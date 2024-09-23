@@ -57,7 +57,7 @@ export class SignupComponent implements OnInit {
           this.snackBar.open('Signup successful!', 'Close', {
             duration: 2000,
           });
-          this.router.navigate(['/dashboard']); // Navigate to dashboard after successful signup
+          this.router.navigate(['/login']); // Navigate to dashboard after successful signup
         },
         error: (err) => {
           console.error('Error creating user', err);

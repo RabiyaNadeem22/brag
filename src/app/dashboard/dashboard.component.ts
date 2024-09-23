@@ -29,9 +29,12 @@ export class DashboardComponent implements OnInit {
 
   achievements: Achievement[] = [];
   showNewAchievement = false;
+  showEditAchievement = false;
   newAchievement: Achievement = { Id: 0, Title: '', Description: '', Date: new Date, Tag: '', UserId: 0 };
   availableTags: string[] = ['coding', 'graduation', 'competition', 'personal growth', 'leadership'];
   selectedTag: string = '';
+  editAchievement: Achievement = { Id: 0, Title: '', Description: '', Date: new Date, Tag: '', UserId: 0 };
+
   editingIndex: number | null = null;
 
   constructor(
@@ -42,16 +45,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     // Temporarily hardcoded data for testing
-    this.achievements = [
-        {
-            Id: 1,
-            Title: 'Test Achievement',
-            Description: 'This is a test description.',
-            Date: new Date('2024-09-18T11:12:30.05'), // Hardcoded date
-            Tag: 'testing',
-            UserId: 1
-        }
-    ];
+   
     this.loadAchievements();
 }
 loadAchievements(): void {
@@ -167,18 +161,50 @@ formatDate(dateString: string): string {
     this.selectedTag = ''; 
   }
 
+  // Toggle the form for editing an existing achievement
+  toggleEditAchievement() {
+    this.showEditAchievement = !this.showEditAchievement;
+    if (!this.showEditAchievement) {
+      this.editAchievement = { Id: 0, Title: '', Description: '', Date: new Date, Tag: '', UserId: this.userService.getUserId() || 0 };
+    }
+  }
+
   updateAchievement(achievement: Achievement) {
-    if (achievement.Title && achievement.Description && achievement.Date) {
-      achievement.UserId = this.userService.getUserId() || 0;
+    const formattedDate = achievement.Date ? this.formatDateForInput(achievement.Date) : '';
+    this.editAchievement = { ...achievement, Date: formattedDate as any }; // Temporarily assign string for the form
+    this.selectedTag = achievement.Tag;
+    this.toggleEditAchievement();
+  }
   
-      this.achievementService.updateAchievement(achievement).subscribe({
+  // Helper function to format the Date object into yyyy-MM-dd
+  formatDateForInput(date: Date): string {
+    const d = new Date(date);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${d.getFullYear()}-${month}-${day}`;
+  }
+  
+  
+
+  // Save the updated achievement
+  saveEditAchievement() {
+    const userId = this.userService.getUserId();
+  
+    if (this.editAchievement.Title && this.editAchievement.Description && this.editAchievement.Date && userId) {
+      // Parse the date string from the input field back to a Date object
+      const achievementToUpdate: Achievement = {
+        ...this.editAchievement,
+        Date: this.editAchievement.Date ? new Date(this.editAchievement.Date) : null, // Convert the string back to Date
+        UserId: userId
+      };
+  
+      this.achievementService.updateAchievement(achievementToUpdate).subscribe({
         next: () => {
-          const index = this.achievements.findIndex(a => a.Id === achievement.Id);
+          const index = this.achievements.findIndex(a => a.Id === this.editAchievement.Id);
           if (index !== -1) {
-            this.achievements[index] = { ...achievement }; // Update existing achievement
+            this.achievements[index] = { ...achievementToUpdate };
           }
-          this.resetNewAchievementForm();
-          this.toggleNewAchievement();
+          this.toggleEditAchievement();
         },
         error: (error) => {
           console.error('Error updating achievement', error);
@@ -188,6 +214,7 @@ formatDate(dateString: string): string {
       console.error('Validation failed: Title, Description, and Date are required');
     }
   }
+  
   
 
 
@@ -210,43 +237,52 @@ formatDate(dateString: string): string {
 }
 
 
+exportAchievements() {
+  const doc = new jsPDF();
+  doc.setFontSize(22);
+  doc.text('Achievements List', 14, 20);
+  doc.setFontSize(12);
+  doc.text('Title', 14, 30);
+  doc.text('Description', 70, 30);
+  doc.text('Date', 140, 30);
+  doc.text('Tags', 180, 30);
 
-  exportAchievements() {
-    const doc = new jsPDF();
-    doc.setFontSize(22);
-    doc.text('Achievements List', 14, 20);
-    doc.setFontSize(12);
-    doc.text('Title', 14, 30);
-    doc.text('Description', 70, 30);
-    doc.text('Date', 140, 30);
-    doc.text('Tags', 180, 30);
-  
-    let y = 40;
-    const lineHeight = 10;
+  let y = 40;
+  const lineHeight = 10;
 
-    this.achievements.forEach(achievement => {
-        doc.text(achievement.Title || '', 14, y);
-        const descriptionLines = doc.splitTextToSize(achievement.Description || '', 70);
-        descriptionLines.forEach((line: string, index: number) => {
-            doc.text(line, 70, y + (index * lineHeight));
-        });
+  this.achievements.forEach(achievement => {
+    doc.text(achievement.Title || '', 14, y);
 
-        // Format the Date property
-        const formattedDate = achievement.Date ? new Date(achievement.Date).toLocaleDateString() : '';
-        doc.text(formattedDate, 140, y);
-        
-        const tags = achievement.Tag || '';
-        const tagsLines = doc.splitTextToSize(tags, 40);
-        tagsLines.forEach((line: string, index: number) => {
-            doc.text(line, 180, y + (index * lineHeight));
-        });
+    // Remove HTML tags from the description
+    const cleanDescription = this.stripHtmlTags(achievement.Description || '');
 
-        // Update the y position for the next achievement
-        y += lineHeight * Math.max(descriptionLines.length, tagsLines.length);
+    const descriptionLines = doc.splitTextToSize(cleanDescription, 70);
+    descriptionLines.forEach((line: string, index: number) => {
+      doc.text(line, 70, y + (index * lineHeight));
     });
 
-    doc.save('achievements.pdf');
+    // Format the Date property
+    const formattedDate = achievement.Date ? new Date(achievement.Date).toLocaleDateString() : '';
+    doc.text(formattedDate, 140, y);
+
+    const tags = achievement.Tag || '';
+    const tagsLines = doc.splitTextToSize(tags, 40);
+    tagsLines.forEach((line: string, index: number) => {
+      doc.text(line, 180, y + (index * lineHeight));
+    });
+
+    // Update the y position for the next achievement
+    y += lineHeight * Math.max(descriptionLines.length, tagsLines.length);
+  });
+
+  doc.save('achievements.pdf');
 }
+
+// Utility function to strip HTML tags
+stripHtmlTags(html: string): string {
+  return html.replace(/<[^>]*>/g, '');
+}
+
 
   
   logout() {
@@ -257,5 +293,4 @@ formatDate(dateString: string): string {
 
   edit() {
     this.router.navigate(['/edit']);
-  }
-}
+    }}

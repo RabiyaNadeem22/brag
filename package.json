@@ -25,6 +25,7 @@
     "@angular/ssr": "^18.2.2",
     "@tinymce/tinymce-angular": "^8.0.1",
     "express": "^4.18.2",
+    "html2pdf.js": "^0.10.2",
     "jspdf": "^2.5.2",
     "ngx-quill": "^26.0.8",
     "rxjs": "~7.8.0",

@@ -1,3 +1,4 @@
+
 <div class="container">
   <header class="toolbar">
     <div class="toolbar-left">
@@ -29,7 +30,8 @@
         <p><strong>Tags:</strong> {{ achievement.Tag }}</p>
       </div>
     </div>
-  
+</div>
+<div>
     <ng-template #noAchievements>
       <p>No achievements found.</p>
     </ng-template>
@@ -48,11 +50,7 @@
       <label for="title">Title:</label>
       <input type="text" id="title" [(ngModel)]="newAchievement.Title" placeholder="Title">
       <label for="description">Description:</label>
-      <editor
-        [(ngModel)]="newAchievement.Description"
-        apiKey="your-tiny-mce-api-key"
-        [init]="editorConfig"
-      ></editor>
+      <editor [(ngModel)]="newAchievement.Description" apiKey="your-tiny-mce-api-key" [init]="editorConfig"></editor>
       <label for="date">Date:</label>
       <input type="date" id="date" [(ngModel)]="newAchievement.Date">
       <div class="filter-item">
@@ -68,4 +66,28 @@
       </div>
     </div>
   </div>
+
+<!-- Edit Achievement Form Modal -->
+<div *ngIf="showEditAchievement" class="form-modal">
+  <div class="form-container">
+    <h2>Edit Achievement</h2>
+    <label for="edit-title">Title:</label>
+    <input type="text" id="edit-title" [(ngModel)]="editAchievement.Title" placeholder="Title">
+    <label for="edit-description">Description:</label>
+    <editor [(ngModel)]="editAchievement.Description" apiKey="your-tiny-mce-api-key" [init]="editorConfig"></editor>
+    <label for="edit-date">Date:</label>
+    <input type="date" id="edit-date" [(ngModel)]="editAchievement.Date">
+    <div class="filter-item">
+      <label for="edit-tag-select">Select a Tag:</label>
+      <select id="edit-tag-select" [(ngModel)]="selectedTag">
+        <option value="">Select a tag</option>
+        <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+      </select>
+    </div>
+    <div class="form-buttons">
+      <button class="submit-button" (click)="saveEditAchievement()">Save</button>
+      <button class="cancel-button" (click)="toggleEditAchievement()">Cancel</button>
+    </div>
+  </div>
+</div>
 </div>
