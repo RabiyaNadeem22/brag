@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Achievement } from '../models/achievement.model';
 
 @Injectable({
@@ -37,6 +37,15 @@ export class AchievementService {
       );
   }
   
+// In achievement.service.ts
+searchAchievementsByTag(userId: number, tag: string): Observable<Achievement[]> {
+  const searchUrl = `${this.apiUrl}/search?tag=${tag}&userId=${userId}`;
+  return this.http.get<Achievement[]>(searchUrl, this.httpOptions)
+      .pipe(
+          tap(data => console.log('API Response:', data)), // Log the response
+          catchError(this.handleError)
+      );
+}
 
 
   deleteAchievement(userId: number, achievementId: number): Observable<any> { 

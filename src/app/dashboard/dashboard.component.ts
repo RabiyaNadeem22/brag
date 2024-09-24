@@ -40,7 +40,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private achievementService: AchievementService,
-    private userService: UserService,private sanitizer: DomSanitizer
+    private userService: UserService,private sanitizer: DomSanitizer,
+    private snackBar: MatSnackBar 
   ) {}
 
   ngOnInit(): void {
@@ -183,6 +184,50 @@ formatDate(dateString: string): string {
     const day = ('0' + d.getDate()).slice(-2);
     return `${d.getFullYear()}-${month}-${day}`;
   }
+  
+  searchTag: string = ''; // Add this variable to hold the search input
+  searchAchievements(): void {
+    const userId = this.userService.getUserId();
+    console.log('Current User ID:', userId);
+  
+    if (!userId) {
+      console.error('User ID not found');
+      return;
+    }
+  
+    if (this.searchTag.trim()) {
+      this.achievementService.searchAchievementsByTag(userId, this.searchTag.trim()).subscribe({
+        next: (data: any[]) => {
+          console.log('Raw Searched Achievements:', data); // Log the raw data
+  
+          this.achievements = data.map(achievement => {
+            console.log('Raw Achievement:', achievement); // Log each achievement for debugging
+  
+            const parsedDate = achievement.date ? new Date(achievement.date) : null; // Parse the date correctly
+  
+            return {
+              Id: achievement.id, // Use lowercase from the API response
+              Title: achievement.title,
+              Description: achievement.description,
+              Date: parsedDate,
+              Tag: achievement.tag,
+              UserId: achievement.userId
+            };
+          });
+  
+          console.log('Mapped Searched Achievements:', this.achievements); // Log mapped achievements
+        },
+        error: (error) => {
+          console.error('Error searching achievements', error);
+          this.snackBar.open('Error fetching achievements. Please try again.', 'Close', { duration: 3000 });
+        }
+      });
+    } else {
+      this.loadAchievements(); // Reload all achievements if no search tag is provided
+    }
+  }
+  
+  
   
   
 

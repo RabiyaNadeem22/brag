@@ -12,7 +12,12 @@
       <button class="toolbar-button" (click)="logout()">Logout</button>
     </div>
   </header>
-
+  
+  <div class="search-container">
+    <input type="text" [(ngModel)]="searchTag" placeholder="Search by Tag" />
+    <button (click)="searchAchievements()">Search</button>
+  </div>
+  
   <!-- Achievements List -->
   <div id="achievements-list" class="achievements-container">
     <div *ngIf="achievements.length > 0; else noAchievements">
