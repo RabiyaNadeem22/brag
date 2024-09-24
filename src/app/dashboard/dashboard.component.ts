@@ -5,7 +5,7 @@ import { UserService } from '../services/user.service';
 import { Achievement } from '../models/achievement.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
-
+//import html2pdf from 'html2pdf.js';
 import jsPDF from 'jspdf';
 
 @Component({
@@ -217,25 +217,29 @@ formatDate(dateString: string): string {
   
   
 
-
   deleteAchievement(achievementId: number) {
     const userId = this.userService.getUserId(); // Get the user ID from session storage
     if (userId === null) {
         console.error('User ID is null. Cannot delete achievement.');
         return; // Exit the method early
     }
-    
-    this.achievementService.deleteAchievement(userId, achievementId).subscribe({
-        next: () => {
-            console.log('Achievement deleted successfully');
-            this.achievements = this.achievements.filter(a => a.Id !== achievementId);
-        },
-        error: (err) => {
-            console.error('Error deleting achievement', err);
-        }
-    });
-}
-
+  
+    const confirmDelete = window.confirm('Are you sure you want to delete this achievement?'); 
+    if (confirmDelete) {
+      this.achievementService.deleteAchievement(userId, achievementId).subscribe({
+          next: () => {
+              console.log('Achievement deleted successfully');
+              this.achievements = this.achievements.filter(a => a.Id !== achievementId);
+          },
+          error: (err) => {
+              console.error('Error deleting achievement', err);
+          }
+      });
+    } else {
+      console.log('Deletion canceled');
+    }
+  }
+  
 
 exportAchievements() {
   const doc = new jsPDF();
