@@ -1,3 +1,5 @@
+declare module 'html2pdf.js';
+declare module 'dompurify';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AchievementService } from '../services/achievement.service';
@@ -5,8 +7,12 @@ import { UserService } from '../services/user.service';
 import { Achievement } from '../models/achievement.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
-//import html2pdf from 'html2pdf.js';
-import jsPDF from 'jspdf';
+
+import html2pdf from 'html2pdf.js';
+
+
+import DOMPurify from 'dompurify';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -284,49 +290,64 @@ formatDate(dateString: string): string {
       console.log('Deletion canceled');
     }
   }
-  
+  async exportAchievements(): Promise<void> {
+    const { default: html2pdf } = await import('html2pdf.js');
 
-exportAchievements() {
-  const doc = new jsPDF();
-  doc.setFontSize(22);
-  doc.text('Achievements List', 14, 20);
-  doc.setFontSize(12);
-  doc.text('Title', 14, 30);
-  doc.text('Description', 70, 30);
-  doc.text('Date', 140, 30);
-  doc.text('Tags', 180, 30);
+    // Check if running in a browser environment
+    if (typeof window === 'undefined') {
+        console.error('This function can only be run in the browser.');
+        return;
+    }
 
-  let y = 40;
-  const lineHeight = 10;
+    // Create the content for the PDF
+    const content = this.achievements
+        .map(achievement => {
+            const formattedDate = achievement.Date ? new Date(achievement.Date).toLocaleDateString() : '';
 
-  this.achievements.forEach(achievement => {
-    doc.text(achievement.Title || '', 14, y);
+            return `
+            <div style="font-family: Arial, sans-serif; margin: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <h1 style="font-size: 24px; color: #000;">Achievement</h1>
+                <p style="font-size: 18px; color: #000;"><strong>Date:</strong> ${formattedDate}</p>
+                <p style="font-size: 18px; color: #000;"><strong>Title:</strong> ${achievement.Title}</p>
+                <p style="font-size: 18px; color: #000;"><strong>Description:</strong></p>
+                <div style="font-size: 16px; color: #000;">${DOMPurify.sanitize(achievement.Description)}</div>
+                <p style="font-size: 18px; color: #000;"><strong>Tag:</strong> ${achievement.Tag}</p>
+                <hr style="margin: 20px 0; border-top: 1px solid #eee;">
+            </div>
+            `;
+        })
+        .join('');
 
-    // Remove HTML tags from the description
-    const cleanDescription = this.stripHtmlTags(achievement.Description || '');
+    const element = document.createElement('div');
+    element.style.display = 'block'; 
+    element.innerHTML = content;
+    document.body.appendChild(element);
 
-    const descriptionLines = doc.splitTextToSize(cleanDescription, 70);
-    descriptionLines.forEach((line: string, index: number) => {
-      doc.text(line, 70, y + (index * lineHeight));
-    });
+    try {
+        await html2pdf()
+            .from(element)
+            .set({
+                margin: 1,
+                filename: 'Achievements.pdf', // Ensure this is the name you want
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            })
+            .save(); // Save the PDF with the specified filename
 
-    // Format the Date property
-    const formattedDate = achievement.Date ? new Date(achievement.Date).toLocaleDateString() : '';
-    doc.text(formattedDate, 140, y);
-
-    const tags = achievement.Tag || '';
-    const tagsLines = doc.splitTextToSize(tags, 40);
-    tagsLines.forEach((line: string, index: number) => {
-      doc.text(line, 180, y + (index * lineHeight));
-    });
-
-    // Update the y position for the next achievement
-    y += lineHeight * Math.max(descriptionLines.length, tagsLines.length);
-  });
-
-  doc.save('achievements.pdf');
+        // Uncomment the line below if you want to auto-print after generating
+        // pdf.autoPrint();
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+    } finally {
+        // Clean up the temporary element
+        document.body.removeChild(element);
+    }
 }
 
+
+
+  
+ 
 // Utility function to strip HTML tags
 stripHtmlTags(html: string): string {
   return html.replace(/<[^>]*>/g, '');
