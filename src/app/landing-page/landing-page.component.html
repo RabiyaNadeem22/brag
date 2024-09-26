@@ -1,46 +1,31 @@
-<!-- Welcome Banner -->
-<mat-card class="banner-card">
-    <mat-card-header>
-      <mat-card-title>Welcome to BragDoc</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Your one-stop solution for managing and showcasing your achievements.</p>
-    </mat-card-content>
-  </mat-card>
-  
+<div class="min-h-screen flex flex-col items-center p-8" style="background: linear-gradient(to right, #111827, #1E3A8A);">
+  <!-- Welcome Banner -->
+  <div class="bg-white text-gray-800 p-8 rounded-lg shadow-2xl w-full md:w-2/3 transition-transform transform hover:scale-105">
+    <h1 class="text-5xl font-bold mb-4 text-center">Welcome to BragDoc</h1>
+    <p class="text-lg text-center">Your one-stop solution for managing and showcasing your achievements.</p>
+  </div>
+
   <!-- Buttons Section -->
-  <div class="cta-buttons">
-    <button mat-raised-button color="primary" routerLink="/login">Login</button>
-    <button mat-raised-button color="accent" routerLink="/signup">Sign Up</button>
+  <div class="mt-8 flex flex-col md:flex-row justify-center gap-4">
+    <a href="/login" class="bg-blue-600 text-white py-2 px-6 rounded-md shadow-md hover:bg-blue-700 transition duration-300 transform hover:scale-105">Login</a>
+    <a href="/signup" class="bg-green-600 text-white py-2 px-6 rounded-md shadow-md hover:bg-green-700 transition duration-300 transform hover:scale-105">Sign Up</a>
   </div>
-  
+
   <!-- Features Section -->
-  <div class="features-container">
-    <mat-card class="features-card">
-      <mat-card-header>
-        <mat-card-title>Track and manage your achievements</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Detailed tracking of all your accomplishments and progress.</p>
-      </mat-card-content>
-    </mat-card>
-  
-    <mat-card class="features-card">
-      <mat-card-header>
-        <mat-card-title>Easy-to-use editor</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>An intuitive editor to add and manage your achievements with ease.</p>
-      </mat-card-content>
-    </mat-card>
-  
-    <mat-card class="features-card">
-      <mat-card-header>
-        <mat-card-title>Search and Filter</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Powerful search and filter options to quickly find your achievements.</p>
-      </mat-card-content>
-    </mat-card>
+  <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 w-full md:w-2/3">
+    <div class="bg-gray-100 text-gray-800 p-6 rounded-lg shadow-xl transition-transform transform hover:scale-105">
+      <h2 class="text-xl font-semibold mb-2">Track and manage your achievements</h2>
+      <p class="text-sm">Detailed tracking of all your accomplishments and progress.</p>
+    </div>
+
+    <div class="bg-gray-100 text-gray-800 p-6 rounded-lg shadow-xl transition-transform transform hover:scale-105">
+      <h2 class="text-xl font-semibold mb-2">Easy-to-use editor</h2>
+      <p class="text-sm">An intuitive editor to add and manage your achievements with ease.</p>
+    </div>
+
+    <div class="bg-gray-100 text-gray-800 p-6 rounded-lg shadow-xl transition-transform transform hover:scale-105">
+      <h2 class="text-xl font-semibold mb-2">Search and Filter</h2>
+      <p class="text-sm">Powerful search and filter options to quickly find your achievements.</p>
+    </div>
   </div>
-  
+</div>

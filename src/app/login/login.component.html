@@ -1,46 +1,85 @@
-<!-- Parent container for layout -->
-<div class="main-container">
-  <!-- Banner Card at the top -->
-  <div class="banner-container" style="margin-bottom:150px ">
-    <mat-card class="banner-card">
-      <mat-card-header>
-        <mat-card-title>BragDoc</mat-card-title>
-      </mat-card-header>
-    </mat-card>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BragDoc Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-kDMEJcGEgBJoNMRBOuLfUsHR3g2PR4cKfuDFr70p5w5anD6QCCQuO25FMBNwBq4Q0oR79Er6V6qKoDfjxEYj8A==" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-200">
 
-  <!-- Login Card below the banner -->
-  <div class="login-container">
-    <mat-card class="login-card">
-      <mat-card-title class="card-title"  style="margin-bottom:30px">Login</mat-card-title>
-      <mat-card-content>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <mat-form-field appearance="fill">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" required>
-            <mat-error *ngIf="f['email'].hasError('required') && f['email'].touched">
-              Email is required
-            </mat-error>
-            <mat-error *ngIf="f['email'].hasError('email') && f['email'].touched">
-              Enter a valid email address
-            </mat-error>
-            
-          </mat-form-field>
+<section class="gradient-form h-full" style="background: linear-gradient(to right, #111827, #1E3A8A);">
+    <div class="container mx-auto h-full flex justify-center items-center">
+        <div class="block rounded-lg bg-white shadow-lg dark:bg-neutral-800 w-full max-w-3xl">
+            <div class="flex flex-wrap">
+                <!-- Left column container (Form) -->
+                <div class="px-4 md:px-0 lg:w-6/12">
+                    <div class="md:mx-6 md:p-12">
+                        <div class="text-center">
+                            <h4 class="mb-6 mt-1 pb-1 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#111827] to-[#1E3A8A]">BragDoc Login</h4>
+                        </div>
 
-          <mat-form-field appearance="fill">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password" required>
-            <mat-error *ngIf="f['password'].hasError('required') && f['password'].touched">
-              Password is required
-            </mat-error>
-            
-          </mat-form-field>
+                        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                            <p class="mt-6 text-xl font-semibold text-gray-700" style="margin-bottom: 30px;">Please login to your account</p>
 
-          <div class="button-container">
-            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Login</button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
+                            <!-- Email input -->
+                            <div class="relative mb-4">
+                                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    formControlName="email"
+                                    class="peer block w-full px-3 py-2.5 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="Enter your email"
+                                    required
+                                />
+                                <p *ngIf="f['email'].hasError('required') && f['email'].touched" class="text-red-600 text-sm">Email is required</p>
+                                <p *ngIf="f['email'].hasError('email') && f['email'].touched" class="text-red-600 text-sm">Enter a valid email address</p>
+                            </div>
+
+                            <!-- Password input -->
+                            <div class="relative mb-6">
+                                <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    formControlName="password"
+                                    class="peer block w-full px-3 py-2.5 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500"
+                                    placeholder="Enter your password"
+                                    required
+                                />
+                                <p *ngIf="f['password'].hasError('required') && f['password'].touched" class="text-red-600 text-sm">Password is required</p>
+                            </div>
+
+                            <!-- Login button -->
+                            <div class="text-center">
+                                <button type="submit" [disabled]="loginForm.invalid" class="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700">
+                                    Login
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right column container with Trophy icon -->
+                <div class="flex items-center justify-center lg:w-6/12 bg-gray-100 rounded-lg">
+                    <div class="px-4 py-6 text-center md:mx-6 md:p-12">
+                        <i class="fas fa-trophy fa-5x text-yellow-500"></i> <!-- Font Awesome Trophy Icon -->
+                        <!-- Uncomment the following line to use Material Icon instead -->
+                        <!-- <i class="material-icons text-yellow-500" style="font-size: 50px;">emoji_events</i> -->
+
+                        <h4 class="mb-6 mt-6 text-xl font-semibold">Show off your achievements!</h4>
+                        <p class="text-sm">
+                            Log in to BragDoc and start documenting your accomplishments. Stay motivated, track progress, and brag about your success with your peers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
