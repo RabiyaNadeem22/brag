@@ -1,98 +1,108 @@
+<body class="gradient-form full" style="background: linear-gradient(to right, #111827, #1E3A8A);">
 
-<div class="container">
-  <header class="toolbar">
-    <div class="toolbar-left">
-      <span class="app-name">BragDoc</span>
-    </div>
-    <div class="toolbar-center">
-      <span>User Dashboard</span>
-    </div>
-    <div class="toolbar-right">
-      <button class="toolbar-button" (click)="edit()">Edit Profile</button>
-      <button class="toolbar-button" (click)="logout()">Logout</button>
-    </div>
-  </header>
-  
-  <div class="search-container">
-    <input type="text" [(ngModel)]="searchTag" placeholder="Search by Tag" />
-    <button (click)="searchAchievements()">Search</button>
-  </div>
-  
-  <!-- Achievements List -->
-  <div id="achievements-list" class="achievements-container">
-    <div *ngIf="achievements.length > 0; else noAchievements">
-      <div *ngFor="let achievement of achievements" class="achievement-card">
-        <div class="achievement-header">
-          <h3>{{ achievement.Title }}</h3>
-          <td>{{ achievement.Date ? (achievement.Date | date: 'shortDate') : 'Invalid Date' }}</td>
+  <div class="container mx-auto p-4">
+    <header class="flex justify-between items-center p-4 bg-white shadow rounded-lg">
+      <div class="toolbar-left">
+        <span class="app-name text-xl font-bold text-gray-800">BragDoc</span>
+      </div>
+      <div class="toolbar-center">
+        <span class="text-lg font-semibold">User Dashboard</span>
+      </div>
+      <div class="toolbar-right">
+        <button class="toolbar-button bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" (click)="edit()">Edit Profile</button>
+        <button class="toolbar-button bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" (click)="logout()">Logout</button>
+      </div>
+    </header>
 
-          <div class="action-icons">
-            <span (click)="updateAchievement(achievement)" class="edit-icon">✎</span>
-            <span (click)="deleteAchievement(achievement.Id)" class="delete-icon">✖</span>
+    <div class="search-container my-4 flex" style="margin-bottom: 50px; margin-top: 50px;">
+      <input type="text" [(ngModel)]="searchTag" placeholder="Search by Tag" class="border rounded-lg p-2 w-full mr-2" />
+      <button (click)="searchAchievements()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Search
+      </button>
+    </div>
+
+    <!-- Heading for Achievements -->
+    <h1 class="text-white font-bold text-xl mb-4 text-center">My Achievements</h1>
+
+    <!-- Achievements List -->
+    <div id="achievements-list" class="achievements-container bg-white shadow-md rounded-lg p-4">
+      <div *ngIf="achievements.length > 0; else noAchievements">
+        <div *ngFor="let achievement of achievements" class="achievement-card bg-gray-200 border rounded-lg p-4 mb-4">
+          <div class="achievement-header flex justify-between items-center">
+            <h2 class="text-lg font-bold text-black">{{ achievement.Title }}</h2>
+            <span class="text-sm text-gray-500">{{ achievement.Date ? (achievement.Date | date: 'shortDate') : 'Invalid Date' }}</span>
+
+            <div class="action-icons">
+              <span (click)="updateAchievement(achievement)" class="text-blue-500 hover:text-blue-700 cursor-pointer">✎</span>
+              <span (click)="deleteAchievement(achievement.Id)" class="text-red-500 hover:text-red-700 cursor-pointer">✖</span>
+            </div>
           </div>
+          <div class="achievement-description mt-2">
+            <h4 class="font-semibold text-gray-700">Description:</h4>
+            <p [innerHTML]="sanitizeHtml(achievement.Description)"></p>
+          </div>
+          <p class="mt-2"><strong>Tags:</strong> {{ achievement.Tag }}</p>
         </div>
-        <p [innerHTML]="sanitizeHtml(achievement.Description)"></p>
-        <p><strong>Tags:</strong> {{ achievement.Tag }}</p>
       </div>
     </div>
-</div>
-<div>
+
     <ng-template #noAchievements>
-      <p>No achievements found.</p>
+      <p class="text-center text-gray-500">No achievements found.</p>
     </ng-template>
-  </div>
 
-  <!-- Create New Achievement and Export Buttons -->
-  <div class="actions">
-    <button class="create-button" (click)="toggleNewAchievement()">Create New Achievement</button>
-    <button class="export-button" style="margin-left: 20px;" (click)="exportAchievements()">Export to PDF</button>
-  </div>
+    <!-- Create New Achievement and Export Buttons -->
+    <div class="actions mt-4 flex justify-between">
+      <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded" (click)="toggleNewAchievement()">Create New Achievement</button>
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" (click)="exportAchievements()">Export to PDF</button>
+    </div>
 
-  <!-- New Achievement Form Modal -->
-  <div *ngIf="showNewAchievement" class="form-modal">
-    <div class="form-container">
-      <h2>Create Achievement</h2>
-      <label for="title">Title:</label>
-      <input type="text" id="title" [(ngModel)]="newAchievement.Title" placeholder="Title">
-      <label for="description">Description:</label>
-      <editor [(ngModel)]="newAchievement.Description" apiKey="your-tiny-mce-api-key" [init]="editorConfig"></editor>
-      <label for="date">Date:</label>
-      <input type="date" id="date" [(ngModel)]="newAchievement.Date">
-      <div class="filter-item">
-        <label for="tag-select">Select a Tag:</label>
-        <select id="tag-select" [(ngModel)]="selectedTag">
-          <option value="">Select a tag</option>
-          <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
-        </select>
+    <!-- New Achievement Form Modal -->
+    <div *ngIf="showNewAchievement" class="form-modal fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
+      <div class="form-container bg-white rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Create Achievement</h2>
+        <label for="title" class="block mb-1">Title:</label>
+        <input type="text" id="title" [(ngModel)]="newAchievement.Title" placeholder="Title" class="border rounded-lg p-2 w-full mb-4"/>
+        <label for="description" class="block mb-1">Description:</label>
+        <editor [(ngModel)]="newAchievement.Description" apiKey="your-tiny-mce-api-key" [init]="editorConfig"></editor>
+        <label for="date" class="block mb-1">Date:</label>
+        <input type="date" id="date" [(ngModel)]="newAchievement.Date" class="border rounded-lg p-2 w-full mb-4"/>
+        <div class="filter-item mb-4">
+          <label for="tag-select" class="block mb-1">Select a Tag:</label>
+          <select id="tag-select" [(ngModel)]="selectedTag" class="border rounded-lg p-2 w-full">
+            <option value="">Select a tag</option>
+            <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+          </select>
+        </div>
+        <div class="form-buttons flex justify-end">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" (click)="createAchievement()">Submit</button>
+          <button class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded ml-2" (click)="toggleNewAchievement()">Cancel</button>
+        </div>
       </div>
-      <div class="form-buttons">
-        <button class="submit-button" (click)="createAchievement()">Submit</button>
-        <button class="cancel-button" (click)="toggleNewAchievement()">Cancel</button>
+    </div>
+
+    <!-- Edit Achievement Form Modal -->
+    <div *ngIf="showEditAchievement" class="form-modal fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
+      <div class="form-container bg-white rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Edit Achievement</h2>
+        <label for="edit-title" class="block mb-1">Title:</label>
+        <input type="text" id="edit-title" [(ngModel)]="editAchievement.Title" placeholder="Title" class="border rounded-lg p-2 w-full mb-4"/>
+        <label for="edit-description" class="block mb-1">Description:</label>
+        <editor [(ngModel)]="editAchievement.Description" apiKey="your-tiny-mce-api-key" [init]="editorConfig"></editor>
+        <label for="edit-date" class="block mb-1">Date:</label>
+        <input type="date" id="edit-date" [(ngModel)]="editAchievement.Date" class="border rounded-lg p-2 w-full mb-4"/>
+        <div class="filter-item mb-4">
+          <label for="edit-tag-select" class="block mb-1">Select a Tag:</label>
+          <select id="edit-tag-select" [(ngModel)]="selectedTag" class="border rounded-lg p-2 w-full">
+            <option value="">Select a tag</option>
+            <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
+          </select>
+        </div>
+        <div class="form-buttons flex justify-end">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" (click)="saveEditAchievement()">Save</button>
+          <button class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded ml-2" (click)="toggleEditAchievement()">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
 
-<!-- Edit Achievement Form Modal -->
-<div *ngIf="showEditAchievement" class="form-modal">
-  <div class="form-container">
-    <h2>Edit Achievement</h2>
-    <label for="edit-title">Title:</label>
-    <input type="text" id="edit-title" [(ngModel)]="editAchievement.Title" placeholder="Title">
-    <label for="edit-description">Description:</label>
-    <editor [(ngModel)]="editAchievement.Description" apiKey="your-tiny-mce-api-key" [init]="editorConfig"></editor>
-    <label for="edit-date">Date:</label>
-    <input type="date" id="edit-date" [(ngModel)]="editAchievement.Date">
-    <div class="filter-item">
-      <label for="edit-tag-select">Select a Tag:</label>
-      <select id="edit-tag-select" [(ngModel)]="selectedTag">
-        <option value="">Select a tag</option>
-        <option *ngFor="let tag of availableTags" [value]="tag">{{ tag }}</option>
-      </select>
-    </div>
-    <div class="form-buttons">
-      <button class="submit-button" (click)="saveEditAchievement()">Save</button>
-      <button class="cancel-button" (click)="toggleEditAchievement()">Cancel</button>
-    </div>
-  </div>
-</div>
-</div>
+</body>
